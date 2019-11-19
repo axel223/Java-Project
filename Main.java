@@ -121,6 +121,7 @@ public class Main extends Application {
         l = new javafx.scene.control.Label("Area = 10000.0");
         l.setTextFill(Color.rgb(176,48,176));
         l.setFont(Font.font("Courier", 20));
+        l.setStyle("-fx-border-color: white;");
 
         l1 = new javafx.scene.control.Label("100");
         l1.setTextFill(Color.rgb(176,48,176));
