@@ -9,11 +9,8 @@ import javafx.beans.value.*;
 import javafx.collections.*;
 import javafx.event.EventHandler;
 import javafx.scene.*;
-import javafx.scene.control.*;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
 import javafx.scene.shape.Polygon;
@@ -22,9 +19,7 @@ import javafx.stage.Stage;
 
 import java.util.ArrayList;
 
-//import java.awt.*;
-
-//area class
+//Area class
 class Area {
     private ArrayList<Double> x = new ArrayList<>(4);
     private ArrayList<Double> y = new ArrayList<>(4);
@@ -48,7 +43,7 @@ class Area {
             }
         }
     }
-    void totalarea()
+    double totalarea()
     {
         float sum_but_no_result=0;
 
@@ -58,19 +53,9 @@ class Area {
         sum_but_no_result += x.get(3)*y.get(0) - x.get(0)*y.get(3);
 
         float sum = (float)Math.abs(sum_but_no_result) / 2.0f;
-
-        System.out.println("Area = "+sum);
+        return sum;
     }
-    void print()
-    {
-        for(int i=0;i<4;i++)
-        {
-            System.out.println(x.get(i)+" "+y.get(i));
-
-        }
-        System.out.println("=================");
-    }
-}
+ }
 /** Drag the anchors around to change a polygon's points. */
 public class Main extends Application {
     public static void main(String[] args) throws Exception { launch(args); }
@@ -80,21 +65,15 @@ public class Main extends Application {
     javafx.scene.control.Label l;
     @Override public void start(final Stage stage) throws Exception {
         Polygon square = createStartingSquare();
-        l = new javafx.scene.control.Label("Area = ");
-        javafx.scene.control.Button b = new javafx.scene.control.Button("Reset");
+        l = new javafx.scene.control.Label("Area = 10000.0");
         l.setTextFill(Color.rgb(176,48,176));
         l.setFont(Font.font("Courier", 20));
-        b.setCursor(Cursor.HAND);
         DropShadow shadow = new DropShadow();
-        b.setEffect(shadow);
-        b.setStyle("-fx-base: b030b0");
 
         Group root = new Group();
-        root.getChildren().addAll(b,l);
-        b.setLayoutX(10);
-        b.setLayoutY(10);
-        l.setLayoutX(80);
-        l.setLayoutY(10);
+        root.getChildren().addAll(l);
+        l.setLayoutX(25);
+        l.setLayoutY(550);
         root.getChildren().add(square);
         root.getChildren().addAll(createControlAnchorsFor(square.getPoints()));
 
@@ -180,7 +159,7 @@ public class Main extends Application {
                     dragDelta.x = getCenterX() - mouseEvent.getX();
                     dragDelta.y = getCenterY() - mouseEvent.getY();
                     getScene().setCursor(Cursor.MOVE);
-//                    System.out.println(getCenterX() + " " + getCenterY());
+                    //for changing area
                     area.x1 = getCenterX();
                     area.y1 = getCenterY();
                 }
@@ -188,11 +167,12 @@ public class Main extends Application {
             setOnMouseReleased(new EventHandler<MouseEvent>() {
                 @Override public void handle(MouseEvent mouseEvent) {
                     getScene().setCursor(Cursor.HAND);
-//                    System.out.println(getCenterX()+","+getCenterY());
+                    //for changing area
                     area.x2 = getCenterX();
                     area.y2 = getCenterY();
                     area.change();
-                    area.totalarea();
+                    //changing the layout
+                    l.setText("Area = " + area.totalarea());
                 }
             });
             setOnMouseDragged(new EventHandler<MouseEvent>() {
