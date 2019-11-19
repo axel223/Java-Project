@@ -21,8 +21,8 @@ import java.util.ArrayList;
 
 //Area class
 class Area {
-    private ArrayList<Double> x = new ArrayList<>(4);
-    private ArrayList<Double> y = new ArrayList<>(4);
+     ArrayList<Double> x = new ArrayList<>(4);
+     ArrayList<Double> y = new ArrayList<>(4);
     Area() {
         x.add(0, 250d); y.add(0, 250d);
         x.add(1, 250d); y.add(1, 350d);
@@ -31,6 +31,8 @@ class Area {
     }
     double x1,x2,y1,y2;
     double l1,l1x,l1y,l2,l2x,l2y,l3,l3x,l3y,l4,l4x,l4y;
+    double d1,d2;
+    double a1,a2,a3,a4;
     void change()
     {
         for(int i=0;i<4;i++)
@@ -76,6 +78,9 @@ class Area {
         l4 = Math.sqrt((x.get(0)-x.get(3))*(x.get(0)-x.get(3)) + (y.get(0)-y.get(3))*(y.get(0)-y.get(3)));
         l4 = ((double)((int)(l4*100.0)))/100.0;
 
+        d1 = Math.sqrt((x.get(0)-x.get(2))*(x.get(0)-x.get(2)) + (y.get(0)-y.get(2))*(y.get(0)-y.get(2)));
+        d2 = Math.sqrt((x.get(1)-x.get(3))*(x.get(1)-x.get(3)) + (y.get(1)-y.get(3))*(y.get(1)-y.get(3)));
+
         l1x = (x.get(1) + x.get(0)) / 2.0d;
         l2x = (x.get(2) + x.get(1)) / 2.0d;
         l3x = (x.get(3) + x.get(2)) / 2.0d;
@@ -86,8 +91,21 @@ class Area {
         l3y = (y.get(3) + y.get(2)) / 2.0d;
         l4y = (y.get(0) + y.get(3)) / 2.0d;
 
-//        System.out.println(l1+" "+l2+" "+l3+" "+l4);
-        System.out.println(l1x +" "+l1y);
+        a1 = Math.acos(((l1*l1) + (l4*l4) - (d2*d2))/(2*l1*l4));
+        a1 = (a1/Math.PI)*180;
+        a1 = ((double)((int)(a1*100.0)))/100.0;
+        a2 = Math.acos(((l1*l1) + (l2*l2) - (d1*d1))/(2*l1*l2));
+        a2 = (a2/Math.PI)*180;
+        a2 = ((double)((int)(a2*100.0)))/100.0;
+        a3 = Math.acos(((l2*l2) + (l3*l3) - (d2*d2))/(2*l2*l3));
+        a3 = (a3/Math.PI)*180;
+        a3 = ((double)((int)(a3*100.0)))/100.0;
+        a4 = Math.acos(((l3*l3) + (l4*l4) - (d1*d1))/(2*l3*l4));
+        a4 = (a4/Math.PI)*180;
+        a4 = ((double)((int)(a4*100.0)))/100.0;
+
+//        System.out.println(d1 +" "+ d2);
+        System.out.println(a1 +" "+a2 +" "+a3+" "+a4);
     }
 
  }
@@ -97,7 +115,7 @@ public class Main extends Application {
 
     // main application layout logic.
     Area area = new Area();
-    javafx.scene.control.Label l,l1,l2,l3,l4;
+    javafx.scene.control.Label l,l1,l2,l3,l4,a1,a2,a3,a4;
     @Override public void start(final Stage stage) throws Exception {
         Polygon square = createStartingSquare();
         l = new javafx.scene.control.Label("Area = 10000.0");
@@ -106,25 +124,42 @@ public class Main extends Application {
 
         l1 = new javafx.scene.control.Label("100");
         l1.setTextFill(Color.rgb(176,48,176));
-        l1.setFont(Font.font("Courier", 10));
+        l1.setFont(Font.font("Courier", 15));
 
         l2 = new javafx.scene.control.Label("100");
         l2.setTextFill(Color.rgb(176,48,176));
-        l2.setFont(Font.font("Courier", 10));
+        l2.setFont(Font.font("Courier", 15));
 
         l3 = new javafx.scene.control.Label("100");
         l3.setTextFill(Color.rgb(176,48,176));
-        l3.setFont(Font.font("Courier", 10));
+        l3.setFont(Font.font("Courier", 15));
 
         l4 = new javafx.scene.control.Label("100");
         l4.setTextFill(Color.rgb(176,48,176));
-        l4.setFont(Font.font("Courier", 10));
+        l4.setFont(Font.font("Courier", 15));
+
+        a1 = new javafx.scene.control.Label("90\u00B0");
+        a1.setTextFill(Color.rgb(176,48,176));
+        a1.setFont(Font.font("Courier", 10));
+
+        a2 = new javafx.scene.control.Label("90\u00B0");
+        a2.setTextFill(Color.rgb(176,48,176));
+        a2.setFont(Font.font("Courier", 10));
+
+        a3 = new javafx.scene.control.Label("90\u00B0");
+        a3.setTextFill(Color.rgb(176,48,176));
+        a3.setFont(Font.font("Courier", 10));
+
+        a4 = new javafx.scene.control.Label("90\u00B0");
+        a4.setTextFill(Color.rgb(176,48,176));
+        a4.setFont(Font.font("Courier", 10));
 
         DropShadow shadow = new DropShadow();
 
         Group root = new Group();
         root.getChildren().addAll(l);
         root.getChildren().addAll(l1,l2,l3,l4);
+        root.getChildren().addAll(a1,a2,a3,a4);
 
         l.setLayoutX(25);
         l.setLayoutY(25);
@@ -133,6 +168,12 @@ public class Main extends Application {
         l2.setLayoutX(300); l2.setLayoutY(350);
         l3.setLayoutX(350); l3.setLayoutY(300);
         l4.setLayoutX(300); l4.setLayoutY(250);
+
+        a1.setLayoutX(252); a1.setLayoutY(252);
+        a2.setLayoutX(252); a2.setLayoutY(352);
+        a3.setLayoutX(352); a3.setLayoutY(352);
+        a4.setLayoutX(352); a4.setLayoutY(252);
+
 
         root.getChildren().add(square);
 
@@ -197,10 +238,10 @@ public class Main extends Application {
         private final DoubleProperty x, y;      //x and y are of observable type Double.
 
         Anchor(Color color, DoubleProperty x, DoubleProperty y) {
-            super(x.get(), y.get(), 7);
+            super(x.get(), y.get(), 5);
             setFill(color.deriveColor(1, 1, 1, 0.5));
             setStroke(color);
-            setStrokeWidth(2);
+            setStrokeWidth(1);
             setStrokeType(StrokeType.OUTSIDE);
 
             this.x = x;
@@ -250,6 +291,23 @@ public class Main extends Application {
                     l4.setText(area.l4+"");
                     l4.setLayoutX(area.l4x);
                     l4.setLayoutY(area.l4y);
+
+                    a1.setText(area.a1+"\u00B0");
+                    a1.setLayoutX(area.x.get(0)+2);
+                    a1.setLayoutY(area.y.get(0)+2);
+
+                    a2.setText(area.a2+"\u00B0");
+                    a2.setLayoutX(area.x.get(1)+2);
+                    a2.setLayoutY(area.y.get(1)+2);
+
+                    a3.setText(area.a3+"\u00B0");
+                    a3.setLayoutX(area.x.get(2)+2);
+                    a3.setLayoutY(area.y.get(2)+2);
+
+                    a4.setText(area.a4+"\u00B0");
+                    a4.setLayoutX(area.x.get(3)+2);
+                    a4.setLayoutY(area.y.get(3)+2);
+
                 }
             });
             setOnMouseDragged(new EventHandler<MouseEvent>() {
