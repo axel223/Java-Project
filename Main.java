@@ -9,171 +9,234 @@ import javafx.beans.value.*;
 import javafx.collections.*;
 import javafx.event.EventHandler;
 import javafx.scene.*;
-import javafx.scene.effect.DropShadow;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
 import javafx.scene.shape.Polygon;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import javafx.util.Pair;
 
 import java.util.ArrayList;
 
 //Area class
-class Area {
-     ArrayList<Double> x = new ArrayList<>(4);
-     ArrayList<Double> y = new ArrayList<>(4);
-    Area() {
-        x.add(0, 250d); y.add(0, 250d);
-        x.add(1, 250d); y.add(1, 350d);
-        x.add(2, 350d); y.add(2, 350d);
-        x.add(3, 350d); y.add(3, 250d);
+class Points {
+     private ArrayList<Pair<Double,Double>> points = new ArrayList<>(4);
+     private double area;
+    Points() {
+        points.add(0,new Pair<>(250d,250d));
+        points.add(1,new Pair<>(250d,350d));
+        points.add(2,new Pair<>(350d,350d));
+        points.add(3,new Pair<>(350d,250d));
     }
-    double x1,x2,y1,y2;
-    double l1,l1x,l1y,l2,l2x,l2y,l3,l3x,l3y,l4,l4x,l4y;
-    double d1,d2;
-    double a1,a2,a3,a4;
+
+    private double x1,x2,y1,y2;
+
+    public void oldPoints(double x1,double y1) {
+        this.x1 = x1;
+        this.y1 = y1;
+    }
+    public void newPoints(double x2,double y2){
+        this.x2 = x2;
+        this.y2 = y2;
+    }
+
     void change()
     {
         for(int i=0;i<4;i++)
         {
-            if(Double.compare(x.get(i),x1) == 0 && Double.compare(y.get(i),y1) == 0)
+            if(Double.compare(points.get(i).getKey(),x1) == 0 && Double.compare(points.get(i).getValue(),y1) == 0)
             {
-                x.set(i,x2);
-                y.set(i,y2);
+                points.set(i,new Pair<>(x2,y2));
                 break;
             }
         }
     }
-    void restart()
+
+    double getX(int i)
     {
-        //set all the co-ordinates to default position
-        x.set(0, 250d); y.set(0, 250d);
-        x.set(1, 250d); y.set(1, 350d);
-        x.set(2, 350d); y.set(2, 350d);
-        x.set(3, 350d); y.set(3, 250d);
+        return points.get(i).getKey();
     }
-    double totalarea()
+    double getY(int i)
+    {
+        return points.get(i).getValue();
+    }
+
+    void calculateArea()
     {
         float sum_but_no_result=0;
-
-        sum_but_no_result += x.get(0)*y.get(1) - x.get(1)*y.get(0);
-        sum_but_no_result += x.get(1)*y.get(2) - x.get(2)*y.get(1);
-        sum_but_no_result += x.get(2)*y.get(3) - x.get(3)*y.get(2);
-        sum_but_no_result += x.get(3)*y.get(0) - x.get(0)*y.get(3);
+        for(int i=0;i<3;i++)
+        {
+            sum_but_no_result += points.get(i).getKey()*points.get(i+1).getValue() - points.get(i+1).getKey()*points.get(i).getValue();
+        }
+        sum_but_no_result += points.get(3).getKey()*points.get(0).getValue() - points.get(0).getKey()*points.get(3).getValue();
 
         float sum = (float)Math.abs(sum_but_no_result) / 2.0f;
-        return sum;
+        this.area = sum;
     }
-    void lengths()
+
+    public double getArea() {
+        return area;
+    }
+}
+ class Length extends Points{
+    private ArrayList<Double> lengths = new ArrayList<>();
+    private ArrayList<Pair<Double,Double>> lengthpoints= new ArrayList<>();
+    private double d1,d2;
+
+    Length(){
+        super();
+        lengths.add(0,100d);
+        lengths.add(1,100d);
+        lengths.add(2,100d);
+        lengths.add(3,100d);
+
+        lengthpoints.add(0,new Pair<>(250d,300d));
+        lengthpoints.add(1,new Pair<>(300d,350d));
+        lengthpoints.add(2,new Pair<>(250d,300d));
+        lengthpoints.add(3,new Pair<>(300d,250d));
+
+        d1 = 100*Math.sqrt(2.0d);
+        d2 = 100*Math.sqrt(2.0d);
+    }
+
+    void calculateLength()
     {
+        double temp;
+        double tempx,tempy;
+        for(int i=0;i<3;i++) {
+            temp = Math.sqrt((super.getX(i+1) - super.getX(i)) * (super.getX(i+1) - super.getX(i)) + (super.getY(i+1) - super.getY(i)) * (super.getY(i+1) - super.getY(i)));
+            temp = ((double) ((int) (temp * 100.0))) / 100.0;
+            lengths.set(i,temp);
 
+            tempx =(super.getX(i+1) + super.getX(i))/2.0d;
+            tempy =(super.getY(i+1)+super.getY(i))/2.0d;
 
-        l1 = Math.sqrt((x.get(1)-x.get(0))*(x.get(1)-x.get(0)) + (y.get(1)-y.get(0))*(y.get(1)-y.get(0)));
-        l1 = ((double)((int)(l1*100.0)))/100.0;
-        l2 = Math.sqrt((x.get(2)-x.get(1))*(x.get(2)-x.get(1)) + (y.get(2)-y.get(1))*(y.get(2)-y.get(1)));
-        l2 = ((double)((int)(l2*100.0)))/100.0;
-        l3 = Math.sqrt((x.get(3)-x.get(2))*(x.get(3)-x.get(2)) + (y.get(3)-y.get(2))*(y.get(3)-y.get(2)));
-        l3 = ((double)((int)(l3*100.0)))/100.0;
-        l4 = Math.sqrt((x.get(0)-x.get(3))*(x.get(0)-x.get(3)) + (y.get(0)-y.get(3))*(y.get(0)-y.get(3)));
-        l4 = ((double)((int)(l4*100.0)))/100.0;
+            lengthpoints.set(i,new Pair<>(tempx,tempy));
 
-        d1 = Math.sqrt((x.get(0)-x.get(2))*(x.get(0)-x.get(2)) + (y.get(0)-y.get(2))*(y.get(0)-y.get(2)));
-        d2 = Math.sqrt((x.get(1)-x.get(3))*(x.get(1)-x.get(3)) + (y.get(1)-y.get(3))*(y.get(1)-y.get(3)));
+        }
+        temp = Math.sqrt((super.getX(0)-super.getX(3))*(super.getX(0)-super.getX(3)) + (super.getY(0)-super.getY(3))*(super.getY(0)-super.getY(3)));
+        temp = ((double)((int)(temp*100.0)))/100.0;
+        lengths.set(3,temp);
 
-        l1x = (x.get(1) + x.get(0)) / 2.0d;
-        l2x = (x.get(2) + x.get(1)) / 2.0d;
-        l3x = (x.get(3) + x.get(2)) / 2.0d;
-        l4x = (x.get(0) + x.get(3)) / 2.0d;
+        tempx = (super.getX(0)+super.getX(3))/2.0d;
+        tempy = (super.getY(0)+super.getY(3))/2.0d;
+        lengthpoints.set(3,new Pair<>(tempx,tempy));
 
-        l1y = (y.get(1) + y.get(0)) / 2.0d;
-        l2y = (y.get(2) + y.get(1)) / 2.0d;
-        l3y = (y.get(3) + y.get(2)) / 2.0d;
-        l4y = (y.get(0) + y.get(3)) / 2.0d;
+        d1 = Math.sqrt((super.getX(1)-super.getX(3))*(super.getX(1)-super.getX(3)) + (super.getY(1)-super.getY(3))*(super.getY(1)-super.getY(3)));
+        d2 = Math.sqrt((super.getX(0)-super.getX(2))*(super.getX(0)-super.getX(2)) + (super.getY(0)-super.getY(2))*(super.getY(0)-super.getY(2)));
 
-        a1 = Math.acos(((l1*l1) + (l4*l4) - (d2*d2))/(2*l1*l4));
-        a1 = (a1/Math.PI)*180;
-        a1 = ((double)((int)(a1*100.0)))/100.0;
-        a2 = Math.acos(((l1*l1) + (l2*l2) - (d1*d1))/(2*l1*l2));
-        a2 = (a2/Math.PI)*180;
-        a2 = ((double)((int)(a2*100.0)))/100.0;
-        a3 = Math.acos(((l2*l2) + (l3*l3) - (d2*d2))/(2*l2*l3));
-        a3 = (a3/Math.PI)*180;
-        a3 = ((double)((int)(a3*100.0)))/100.0;
-        a4 = Math.acos(((l3*l3) + (l4*l4) - (d1*d1))/(2*l3*l4));
-        a4 = (a4/Math.PI)*180;
-        a4 = ((double)((int)(a4*100.0)))/100.0;
+    }
 
-//        System.out.println(d1 +" "+ d2);
-        System.out.println(a1 +" "+a2 +" "+a3+" "+a4);
+    double getLength(int i){
+        return lengths.get(i);
+    }
+    double getLengthx(int i){
+        return lengthpoints.get(i).getKey();
+    }
+    double getLengthy(int i){
+        return lengthpoints.get(i).getValue();
+    }
+    double getD1(){
+        return d1;
+    }
+    double getD2(){
+        return d2;
     }
 
  }
+ class Angle extends Length{
+    private ArrayList<Double> angles = new ArrayList<>();
+    Angle(){
+        super();
+        angles.add(0,90.0d);
+        angles.add(1,90.0d);
+        angles.add(2,90.0d);
+        angles.add(3,90.0d);
+    }
+    void calculateAngle(){
+
+        double a0,a1,a2,a3;
+
+        a0 = Math.acos(((super.getLength(0)*super.getLength(0)) + (super.getLength(3)*super.getLength(3)) - (super.getD1()*super.getD1()))/(2*super.getLength(0)*super.getLength(3)));
+        a0 = (a0/Math.PI)*180;
+        a0 = ((double)((int)(a0*100.0)))/100.0;
+
+        a1 = Math.acos(((super.getLength(0)*super.getLength(0)) + (super.getLength(1)*super.getLength(1)) - (super.getD2()*super.getD2()))/(2*super.getLength(1)*super.getLength(0)));
+        a1 = (a1/Math.PI)*180;
+        a1 = ((double)((int)(a1*100.0)))/100.0;
+
+        a2 = Math.acos(((super.getLength(1)*super.getLength(1)) + (super.getLength(2)*super.getLength(2)) - (super.getD1()*super.getD1()))/(2*super.getLength(2)*super.getLength(1)));
+        a2 = (a2/Math.PI)*180;
+        a2 = ((double)((int)(a2*100.0)))/100.0;
+
+        a3 = Math.acos(((super.getLength(3)*super.getLength(3)) + (super.getLength(2)*super.getLength(2)) - (super.getD2()*super.getD2()))/(2*super.getLength(3)*super.getLength(2)));
+        a3 = (a3/Math.PI)*180;
+        a3 = ((double)((int)(a3*100.0)))/100.0;
+
+        angles.add(0,a0);
+        angles.add(1,a1);
+        angles.add(2,a2);
+        angles.add(3,a3);
+//        System.out.println(a0+" "+a1+" "+a2+" "+a3);
+    }
+    public double getAngle(int i){
+        return angles.get(i);
+    }
+
+
+ }
+
 /** Drag the anchors around to change a polygon's points. */
 public class Main extends Application {
     public static void main(String[] args) throws Exception { launch(args); }
 
     // main application layout logic.
-    Area area = new Area();
-    javafx.scene.control.Label l,l1,l2,l3,l4,a1,a2,a3,a4;
+    private Angle area = new Angle();
+    private javafx.scene.control.Label areaLabel;
+    private ArrayList<javafx.scene.control.Label> lengthLabels = new ArrayList<>(4);
+    private ArrayList<javafx.scene.control.Label> angleLabels = new ArrayList<>(4);
     @Override public void start(final Stage stage) throws Exception {
         Polygon square = createStartingSquare();
-        l = new javafx.scene.control.Label("Area = 10000.0");
-        l.setTextFill(Color.rgb(176,48,176));
-        l.setFont(Font.font("Courier", 20));
-        l.setStyle("-fx-border-color: white;");
 
-        l1 = new javafx.scene.control.Label("100");
-        l1.setTextFill(Color.rgb(176,48,176));
-        l1.setFont(Font.font("Courier", 15));
+        areaLabel = new javafx.scene.control.Label("Area = 10000.0");
+        areaLabel.setTextFill(Color.rgb(176,48,176));
+        areaLabel.setFont(Font.font("Courier", 20));
+        areaLabel.setStyle("-fx-border-color:white; -fx-padding:10px;");
 
-        l2 = new javafx.scene.control.Label("100");
-        l2.setTextFill(Color.rgb(176,48,176));
-        l2.setFont(Font.font("Courier", 15));
+        javafx.scene.control.Label temp;
+        for(int i = 0; i<4; i++) {
+            temp = new javafx.scene.control.Label("100");
+            temp.setTextFill(Color.rgb(176, 48, 176));
+            temp.setFont(Font.font("Courier", 15));
+            lengthLabels.add(i, temp);
+        }
 
-        l3 = new javafx.scene.control.Label("100");
-        l3.setTextFill(Color.rgb(176,48,176));
-        l3.setFont(Font.font("Courier", 15));
+        for(int i=0;i<4;i++) {
+            temp = new javafx.scene.control.Label("90\u00B0");
+            temp.setTextFill(Color.rgb(176, 48, 176));
+            temp.setFont(Font.font("Courier", 10));
+            angleLabels.add(i, temp);
+        }
 
-        l4 = new javafx.scene.control.Label("100");
-        l4.setTextFill(Color.rgb(176,48,176));
-        l4.setFont(Font.font("Courier", 15));
-
-        a1 = new javafx.scene.control.Label("90\u00B0");
-        a1.setTextFill(Color.rgb(176,48,176));
-        a1.setFont(Font.font("Courier", 10));
-
-        a2 = new javafx.scene.control.Label("90\u00B0");
-        a2.setTextFill(Color.rgb(176,48,176));
-        a2.setFont(Font.font("Courier", 10));
-
-        a3 = new javafx.scene.control.Label("90\u00B0");
-        a3.setTextFill(Color.rgb(176,48,176));
-        a3.setFont(Font.font("Courier", 10));
-
-        a4 = new javafx.scene.control.Label("90\u00B0");
-        a4.setTextFill(Color.rgb(176,48,176));
-        a4.setFont(Font.font("Courier", 10));
-
-        DropShadow shadow = new DropShadow();
 
         Group root = new Group();
-        root.getChildren().addAll(l);
-        root.getChildren().addAll(l1,l2,l3,l4);
-        root.getChildren().addAll(a1,a2,a3,a4);
+        root.getChildren().addAll(areaLabel);
+        root.getChildren().addAll(lengthLabels);
+        root.getChildren().addAll(angleLabels);
 
-        l.setLayoutX(25);
-        l.setLayoutY(25);
+        areaLabel.setLayoutX(25);
+        areaLabel.setLayoutY(25);
 
-        l1.setLayoutX(250); l1.setLayoutY(300);
-        l2.setLayoutX(300); l2.setLayoutY(350);
-        l3.setLayoutX(350); l3.setLayoutY(300);
-        l4.setLayoutX(300); l4.setLayoutY(250);
+        lengthLabels.get(0).setLayoutX(250); lengthLabels.get(0).setLayoutY(300);
+        lengthLabels.get(1).setLayoutX(300); lengthLabels.get(1).setLayoutY(350);
+        lengthLabels.get(2).setLayoutX(350); lengthLabels.get(2).setLayoutY(300);
+        lengthLabels.get(3).setLayoutX(300); lengthLabels.get(3).setLayoutY(250);
 
-        a1.setLayoutX(252); a1.setLayoutY(252);
-        a2.setLayoutX(252); a2.setLayoutY(352);
-        a3.setLayoutX(352); a3.setLayoutY(352);
-        a4.setLayoutX(352); a4.setLayoutY(252);
+        angleLabels.get(0).setLayoutX(252); angleLabels.get(0).setLayoutY(252);
+        angleLabels.get(1).setLayoutX(252); angleLabels.get(1).setLayoutY(352);
+        angleLabels.get(2).setLayoutX(352); angleLabels.get(2).setLayoutY(352);
+        angleLabels.get(3).setLayoutX(352); angleLabels.get(3).setLayoutY(252);
 
 
         root.getChildren().add(square);
@@ -262,52 +325,34 @@ public class Main extends Application {
                     dragDelta.x = getCenterX() - mouseEvent.getX();
                     dragDelta.y = getCenterY() - mouseEvent.getY();
                     getScene().setCursor(Cursor.MOVE);
+
                     //for changing area
-                    area.x1 = getCenterX();
-                    area.y1 = getCenterY();
+                    area.oldPoints(getCenterX(),getCenterY());
                 }
             });
             setOnMouseReleased(new EventHandler<MouseEvent>() {
                 @Override public void handle(MouseEvent mouseEvent) {
                     getScene().setCursor(Cursor.HAND);
                     //for changing area
-                    area.x2 = getCenterX();
-                    area.y2 = getCenterY();
+                    area.newPoints(getCenterX(),getCenterY());
+
                     area.change();
+                    area.calculateArea();
+                    area.calculateLength();
+                    area.calculateAngle();
+
                     //changing the layout
-                    l.setText("Area = " + area.totalarea());
-                    area.lengths();
-                    l1.setText(area.l1+"");
-                    l1.setLayoutX(area.l1x);
-                    l1.setLayoutY(area.l1y);
+                    areaLabel.setText("Area = " + area.getArea());
+                    for(int i=0;i<4;i++)
+                    {
+                        lengthLabels.get(i).setText(area.getLength(i)+"");
+                        lengthLabels.get(i).setLayoutX(area.getLengthx(i));
+                        lengthLabels.get(i).setLayoutY(area.getLengthy(i));
 
-                    l2.setText(area.l2+"");
-                    l2.setLayoutX(area.l2x);
-                    l2.setLayoutY(area.l2y);
-
-                    l3.setText(area.l3+"");
-                    l3.setLayoutX(area.l3x);
-                    l3.setLayoutY(area.l3y);
-
-                    l4.setText(area.l4+"");
-                    l4.setLayoutX(area.l4x);
-                    l4.setLayoutY(area.l4y);
-
-                    a1.setText(area.a1+"\u00B0");
-                    a1.setLayoutX(area.x.get(0)+2);
-                    a1.setLayoutY(area.y.get(0)+2);
-
-                    a2.setText(area.a2+"\u00B0");
-                    a2.setLayoutX(area.x.get(1)+2);
-                    a2.setLayoutY(area.y.get(1)+2);
-
-                    a3.setText(area.a3+"\u00B0");
-                    a3.setLayoutX(area.x.get(2)+2);
-                    a3.setLayoutY(area.y.get(2)+2);
-
-                    a4.setText(area.a4+"\u00B0");
-                    a4.setLayoutX(area.x.get(3)+2);
-                    a4.setLayoutY(area.y.get(3)+2);
+                        angleLabels.get(i).setText(area.getAngle(i)+"");
+                        angleLabels.get(i).setLayoutX(area.getX(i)+2);
+                        angleLabels.get(i).setLayoutY(area.getY(i)+2);
+                    }
 
                 }
             });
