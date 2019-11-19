@@ -30,7 +30,7 @@ class Area {
         x.add(3, 350d); y.add(3, 250d);
     }
     double x1,x2,y1,y2;
-
+    double l1,l1x,l1y,l2,l2x,l2y,l3,l3x,l3y,l4,l4x,l4y;
     void change()
     {
         for(int i=0;i<4;i++)
@@ -42,6 +42,14 @@ class Area {
                 break;
             }
         }
+    }
+    void restart()
+    {
+        //set all the co-ordinates to default position
+        x.set(0, 250d); y.set(0, 250d);
+        x.set(1, 250d); y.set(1, 350d);
+        x.set(2, 350d); y.set(2, 350d);
+        x.set(3, 350d); y.set(3, 250d);
     }
     double totalarea()
     {
@@ -55,6 +63,33 @@ class Area {
         float sum = (float)Math.abs(sum_but_no_result) / 2.0f;
         return sum;
     }
+    void lengths()
+    {
+
+
+        l1 = Math.sqrt((x.get(1)-x.get(0))*(x.get(1)-x.get(0)) + (y.get(1)-y.get(0))*(y.get(1)-y.get(0)));
+        l1 = ((double)((int)(l1*100.0)))/100.0;
+        l2 = Math.sqrt((x.get(2)-x.get(1))*(x.get(2)-x.get(1)) + (y.get(2)-y.get(1))*(y.get(2)-y.get(1)));
+        l2 = ((double)((int)(l2*100.0)))/100.0;
+        l3 = Math.sqrt((x.get(3)-x.get(2))*(x.get(3)-x.get(2)) + (y.get(3)-y.get(2))*(y.get(3)-y.get(2)));
+        l3 = ((double)((int)(l3*100.0)))/100.0;
+        l4 = Math.sqrt((x.get(0)-x.get(3))*(x.get(0)-x.get(3)) + (y.get(0)-y.get(3))*(y.get(0)-y.get(3)));
+        l4 = ((double)((int)(l4*100.0)))/100.0;
+
+        l1x = (x.get(1) + x.get(0)) / 2.0d;
+        l2x = (x.get(2) + x.get(1)) / 2.0d;
+        l3x = (x.get(3) + x.get(2)) / 2.0d;
+        l4x = (x.get(0) + x.get(3)) / 2.0d;
+
+        l1y = (y.get(1) + y.get(0)) / 2.0d;
+        l2y = (y.get(2) + y.get(1)) / 2.0d;
+        l3y = (y.get(3) + y.get(2)) / 2.0d;
+        l4y = (y.get(0) + y.get(3)) / 2.0d;
+
+//        System.out.println(l1+" "+l2+" "+l3+" "+l4);
+        System.out.println(l1x +" "+l1y);
+    }
+
  }
 /** Drag the anchors around to change a polygon's points. */
 public class Main extends Application {
@@ -62,23 +97,49 @@ public class Main extends Application {
 
     // main application layout logic.
     Area area = new Area();
-    javafx.scene.control.Label l;
+    javafx.scene.control.Label l,l1,l2,l3,l4;
     @Override public void start(final Stage stage) throws Exception {
         Polygon square = createStartingSquare();
         l = new javafx.scene.control.Label("Area = 10000.0");
         l.setTextFill(Color.rgb(176,48,176));
         l.setFont(Font.font("Courier", 20));
+
+        l1 = new javafx.scene.control.Label("100");
+        l1.setTextFill(Color.rgb(176,48,176));
+        l1.setFont(Font.font("Courier", 10));
+
+        l2 = new javafx.scene.control.Label("100");
+        l2.setTextFill(Color.rgb(176,48,176));
+        l2.setFont(Font.font("Courier", 10));
+
+        l3 = new javafx.scene.control.Label("100");
+        l3.setTextFill(Color.rgb(176,48,176));
+        l3.setFont(Font.font("Courier", 10));
+
+        l4 = new javafx.scene.control.Label("100");
+        l4.setTextFill(Color.rgb(176,48,176));
+        l4.setFont(Font.font("Courier", 10));
+
         DropShadow shadow = new DropShadow();
 
         Group root = new Group();
         root.getChildren().addAll(l);
+        root.getChildren().addAll(l1,l2,l3,l4);
+
         l.setLayoutX(25);
-        l.setLayoutY(550);
+        l.setLayoutY(25);
+
+        l1.setLayoutX(250); l1.setLayoutY(300);
+        l2.setLayoutX(300); l2.setLayoutY(350);
+        l3.setLayoutX(350); l3.setLayoutY(300);
+        l4.setLayoutX(300); l4.setLayoutY(250);
+
         root.getChildren().add(square);
+
         root.getChildren().addAll(createControlAnchorsFor(square.getPoints()));
 
         stage.setTitle("Interactive Polygon Area Calculator");
-        stage.setScene(new Scene(root,600, 600, Color.rgb(32,32,64)));
+        stage.setScene(new Scene(root,1080, 720, Color.rgb(32,32,64)));
         stage.show();
     }
 
@@ -96,7 +157,7 @@ public class Main extends Application {
         square.setStroke(Color.rgb(96,32,128));
         square.setStrokeWidth(2);
         square.setStrokeLineCap(StrokeLineCap.ROUND);
-        square.setFill(Color.rgb(32,32,85));
+        square.setFill(Color.rgb(32,32,85,0.3));
 
         return square;
     }
@@ -173,6 +234,22 @@ public class Main extends Application {
                     area.change();
                     //changing the layout
                     l.setText("Area = " + area.totalarea());
+                    area.lengths();
+                    l1.setText(area.l1+"");
+                    l1.setLayoutX(area.l1x);
+                    l1.setLayoutY(area.l1y);
+
+                    l2.setText(area.l2+"");
+                    l2.setLayoutX(area.l2x);
+                    l2.setLayoutY(area.l2y);
+
+                    l3.setText(area.l3+"");
+                    l3.setLayoutX(area.l3x);
+                    l3.setLayoutY(area.l3y);
+
+                    l4.setText(area.l4+"");
+                    l4.setLayoutX(area.l4x);
+                    l4.setLayoutY(area.l4y);
                 }
             });
             setOnMouseDragged(new EventHandler<MouseEvent>() {
