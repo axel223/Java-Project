@@ -20,16 +20,67 @@ import javafx.scene.shape.Polygon;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
-import java.awt.*;
+import java.util.ArrayList;
 
+//import java.awt.*;
+
+//area class
+class Area {
+    private ArrayList<Double> x = new ArrayList<>(4);
+    private ArrayList<Double> y = new ArrayList<>(4);
+    Area() {
+        x.add(0, 250d); y.add(0, 250d);
+        x.add(1, 250d); y.add(1, 350d);
+        x.add(2, 350d); y.add(2, 350d);
+        x.add(3, 350d); y.add(3, 250d);
+    }
+    double x1,x2,y1,y2;
+
+    void change()
+    {
+        for(int i=0;i<4;i++)
+        {
+            if(Double.compare(x.get(i),x1) == 0 && Double.compare(y.get(i),y1) == 0)
+            {
+                x.set(i,x2);
+                y.set(i,y2);
+                break;
+            }
+        }
+    }
+    void totalarea()
+    {
+        float sum_but_no_result=0;
+
+        sum_but_no_result += x.get(0)*y.get(1) - x.get(1)*y.get(0);
+        sum_but_no_result += x.get(1)*y.get(2) - x.get(2)*y.get(1);
+        sum_but_no_result += x.get(2)*y.get(3) - x.get(3)*y.get(2);
+        sum_but_no_result += x.get(3)*y.get(0) - x.get(0)*y.get(3);
+
+        float sum = (float)Math.abs(sum_but_no_result) / 2.0f;
+
+        System.out.println("Area = "+sum);
+    }
+    void print()
+    {
+        for(int i=0;i<4;i++)
+        {
+            System.out.println(x.get(i)+" "+y.get(i));
+
+        }
+        System.out.println("=================");
+    }
+}
 /** Drag the anchors around to change a polygon's points. */
 public class Main extends Application {
     public static void main(String[] args) throws Exception { launch(args); }
 
     // main application layout logic.
+    Area area = new Area();
+    javafx.scene.control.Label l;
     @Override public void start(final Stage stage) throws Exception {
         Polygon square = createStartingSquare();
-        javafx.scene.control.Label l = new javafx.scene.control.Label("Area = ");
+        l = new javafx.scene.control.Label("Area = ");
         javafx.scene.control.Button b = new javafx.scene.control.Button("Reset");
         l.setTextFill(Color.rgb(176,48,176));
         l.setFont(Font.font("Courier", 20));
@@ -37,7 +88,6 @@ public class Main extends Application {
         DropShadow shadow = new DropShadow();
         b.setEffect(shadow);
         b.setStyle("-fx-base: b030b0");
-
 
         Group root = new Group();
         root.getChildren().addAll(b,l);
@@ -130,12 +180,19 @@ public class Main extends Application {
                     dragDelta.x = getCenterX() - mouseEvent.getX();
                     dragDelta.y = getCenterY() - mouseEvent.getY();
                     getScene().setCursor(Cursor.MOVE);
+//                    System.out.println(getCenterX() + " " + getCenterY());
+                    area.x1 = getCenterX();
+                    area.y1 = getCenterY();
                 }
             });
             setOnMouseReleased(new EventHandler<MouseEvent>() {
                 @Override public void handle(MouseEvent mouseEvent) {
                     getScene().setCursor(Cursor.HAND);
-                    System.out.println(getCenterX()+","+getCenterY());
+//                    System.out.println(getCenterX()+","+getCenterY());
+                    area.x2 = getCenterX();
+                    area.y2 = getCenterY();
+                    area.change();
+                    area.totalarea();
                 }
             });
             setOnMouseDragged(new EventHandler<MouseEvent>() {
@@ -168,9 +225,5 @@ public class Main extends Application {
 
         // records RELATIVE x and y co-ordinates.
         private class Delta { double x, y; }
-    }
-
-    class Coordinates {
-        double x1=250,y1=250,x2=250,y2=350,x3=350,y3=350,x4=350,y4=250;
     }
 }
