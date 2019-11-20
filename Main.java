@@ -5,11 +5,8 @@ import javafx.scene.Scene;
 
 import javafx.application.Application;
 import javafx.beans.property.*;
-import javafx.beans.value.*;
 import javafx.collections.*;
-import javafx.event.EventHandler;
 import javafx.scene.*;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
 import javafx.scene.shape.Polygon;
@@ -32,11 +29,11 @@ class Points {
 
     private double x1,x2,y1,y2;
 
-    public void oldPoints(double x1,double y1) {
+    void oldPoints(double x1, double y1) {
         this.x1 = x1;
         this.y1 = y1;
     }
-    public void newPoints(double x2,double y2){
+    void newPoints(double x2, double y2){
         this.x2 = x2;
         this.y2 = y2;
     }
@@ -71,17 +68,16 @@ class Points {
         }
         sum_but_no_result += points.get(3).getKey()*points.get(0).getValue() - points.get(0).getKey()*points.get(3).getValue();
 
-        float sum = (float)Math.abs(sum_but_no_result) / 2.0f;
-        this.area = sum;
+        this.area = Math.abs(sum_but_no_result) / 2.0f;
     }
 
-    public double getArea() {
+    double getArea() {
         return area;
     }
 }
  class Length extends Points{
     private ArrayList<Double> lengths = new ArrayList<>();
-    private ArrayList<Pair<Double,Double>> lengthpoints= new ArrayList<>();
+    private ArrayList<Pair<Double,Double>> lengthPoints= new ArrayList<>();
     private double d1,d2;
 
     Length(){
@@ -91,10 +87,10 @@ class Points {
         lengths.add(2,100d);
         lengths.add(3,100d);
 
-        lengthpoints.add(0,new Pair<>(250d,300d));
-        lengthpoints.add(1,new Pair<>(300d,350d));
-        lengthpoints.add(2,new Pair<>(250d,300d));
-        lengthpoints.add(3,new Pair<>(300d,250d));
+        lengthPoints.add(0,new Pair<>(250d,300d));
+        lengthPoints.add(1,new Pair<>(300d,350d));
+        lengthPoints.add(2,new Pair<>(250d,300d));
+        lengthPoints.add(3,new Pair<>(300d,250d));
 
         d1 = 100*Math.sqrt(2.0d);
         d2 = 100*Math.sqrt(2.0d);
@@ -103,25 +99,25 @@ class Points {
     void calculateLength()
     {
         double temp;
-        double tempx,tempy;
+        double tempX,tempY;
         for(int i=0;i<3;i++) {
             temp = Math.sqrt((super.getX(i+1) - super.getX(i)) * (super.getX(i+1) - super.getX(i)) + (super.getY(i+1) - super.getY(i)) * (super.getY(i+1) - super.getY(i)));
             temp = ((double) ((int) (temp * 100.0))) / 100.0;
             lengths.set(i,temp);
 
-            tempx =(super.getX(i+1) + super.getX(i))/2.0d;
-            tempy =(super.getY(i+1)+super.getY(i))/2.0d;
+            tempX =(super.getX(i+1) + super.getX(i))/2.0d;
+            tempY =(super.getY(i+1)+super.getY(i))/2.0d;
 
-            lengthpoints.set(i,new Pair<>(tempx,tempy));
+            lengthPoints.set(i,new Pair<>(tempX,tempY));
 
         }
         temp = Math.sqrt((super.getX(0)-super.getX(3))*(super.getX(0)-super.getX(3)) + (super.getY(0)-super.getY(3))*(super.getY(0)-super.getY(3)));
         temp = ((double)((int)(temp*100.0)))/100.0;
         lengths.set(3,temp);
 
-        tempx = (super.getX(0)+super.getX(3))/2.0d;
-        tempy = (super.getY(0)+super.getY(3))/2.0d;
-        lengthpoints.set(3,new Pair<>(tempx,tempy));
+        tempX = (super.getX(0)+super.getX(3))/2.0d;
+        tempY = (super.getY(0)+super.getY(3))/2.0d;
+        lengthPoints.set(3,new Pair<>(tempX,tempY));
 
         d1 = Math.sqrt((super.getX(1)-super.getX(3))*(super.getX(1)-super.getX(3)) + (super.getY(1)-super.getY(3))*(super.getY(1)-super.getY(3)));
         d2 = Math.sqrt((super.getX(0)-super.getX(2))*(super.getX(0)-super.getX(2)) + (super.getY(0)-super.getY(2))*(super.getY(0)-super.getY(2)));
@@ -131,11 +127,11 @@ class Points {
     double getLength(int i){
         return lengths.get(i);
     }
-    double getLengthx(int i){
-        return lengthpoints.get(i).getKey();
+    double getLengthX(int i){
+        return lengthPoints.get(i).getKey();
     }
-    double getLengthy(int i){
-        return lengthpoints.get(i).getValue();
+    double getLengthY(int i){
+        return lengthPoints.get(i).getValue();
     }
     double getD1(){
         return d1;
@@ -180,7 +176,7 @@ class Points {
         angles.add(3,a3);
 //        System.out.println(a0+" "+a1+" "+a2+" "+a3);
     }
-    public double getAngle(int i){
+    double getAngle(int i){
         return angles.get(i);
     }
 
@@ -189,14 +185,14 @@ class Points {
 
 /** Drag the anchors around to change a polygon's points. */
 public class Main extends Application {
-    public static void main(String[] args) throws Exception { launch(args); }
+    public static void main(String[] args) { launch(args); }
 
     // main application layout logic.
     private Angle area = new Angle();
     private javafx.scene.control.Label areaLabel;
     private ArrayList<javafx.scene.control.Label> lengthLabels = new ArrayList<>(4);
     private ArrayList<javafx.scene.control.Label> angleLabels = new ArrayList<>(4);
-    @Override public void start(final Stage stage) throws Exception {
+    @Override public void start(final Stage stage) {
         Polygon square = createStartingSquare();
 
         areaLabel = new javafx.scene.control.Label("Area = 10000.0");
@@ -277,18 +273,8 @@ public class Main extends Application {
             DoubleProperty xProperty = new SimpleDoubleProperty(points.get(i));
             DoubleProperty yProperty = new SimpleDoubleProperty(points.get(i + 1));
 
-            xProperty.addListener(new ChangeListener<Number>() {
-                @Override public void changed(ObservableValue<? extends Number> ov, Number oldX, Number x) {
-                    points.set(idx, (double) x);
-                }
-            });
-
-
-            yProperty.addListener(new ChangeListener<Number>() {
-                @Override public void changed(ObservableValue<? extends Number> ov, Number oldY, Number y) {
-                    points.set(idx + 1, (double) y);
-                }
-            });
+            xProperty.addListener((ov, oldX, x) -> points.set(idx, (double) x));
+            yProperty.addListener((ov, oldY, y) -> points.set(idx + 1, (double) y));
 
             anchors.add(new Anchor(Color.rgb(176,48,176), xProperty, yProperty));
         }
@@ -299,7 +285,6 @@ public class Main extends Application {
 
     // a draggable anchor displayed around a point.
     class Anchor extends Circle {
-        private final DoubleProperty x, y;      //x and y are of observable type Double.
 
         Anchor(Color color, DoubleProperty x, DoubleProperty y) {
             super(x.get(), y.get(), 5);
@@ -307,9 +292,6 @@ public class Main extends Application {
             setStroke(color);
             setStrokeWidth(1);
             setStrokeType(StrokeType.OUTSIDE);
-
-            this.x = x;
-            this.y = y;
 
             x.bind(centerXProperty());
             y.bind(centerYProperty());
@@ -319,67 +301,62 @@ public class Main extends Application {
         // make a node movable by dragging it around with the mouse.
         private void enableDrag() {
             final Delta dragDelta = new Delta();
-            setOnMousePressed(new EventHandler<MouseEvent>() {
-                @Override public void handle(MouseEvent mouseEvent) {
-                    // record a delta distance for the drag and drop operation.
-                    dragDelta.x = getCenterX() - mouseEvent.getX();
-                    dragDelta.y = getCenterY() - mouseEvent.getY();
-                    getScene().setCursor(Cursor.MOVE);
+            setOnMousePressed(mouseEvent -> {
+                // record a delta distance for the drag and drop operation.
+                dragDelta.x = getCenterX() - mouseEvent.getX();
+                dragDelta.y = getCenterY() - mouseEvent.getY();
+                getScene().setCursor(Cursor.MOVE);
 
-                    //for changing area
-                    area.oldPoints(getCenterX(),getCenterY());
+                //for changing area
+                area.oldPoints(getCenterX(),getCenterY());
+            });
+            setOnMouseReleased(mouseEvent -> {
+                getScene().setCursor(Cursor.HAND);
+                //for changing area
+                area.newPoints(getCenterX(),getCenterY());
+
+                area.change();
+                area.calculateArea();
+                area.calculateLength();
+                area.calculateAngle();
+
+                //changing the layout
+                areaLabel.setText("Area = " + area.getArea());
+                for(int i=0;i<4;i++)
+                {
+                    lengthLabels.get(i).setText(area.getLength(i)+"");
+                    lengthLabels.get(i).setLayoutX(area.getLengthX(i));
+                    lengthLabels.get(i).setLayoutY(area.getLengthY(i));
+
+                    angleLabels.get(i).setText(area.getAngle(i)+"");
+                    angleLabels.get(i).setLayoutX(area.getX(i)+2);
+                    angleLabels.get(i).setLayoutY(area.getY(i)+2);
+                }
+
+            });
+            setOnMouseDragged(mouseEvent -> {
+                double newX = mouseEvent.getX() + dragDelta.x;
+                if (newX > 0 && newX < getScene().getWidth()) {
+                    setCenterX(newX);
+                }
+                double newY = mouseEvent.getY() + dragDelta.y;
+                if (newY > 0 && newY < getScene().getHeight()) {
+                    setCenterY(newY);
+                }
+                for(int i=0;i<4;i++)
+                {
+                    lengthLabels.get(i).setText(null);
+                    angleLabels.get(i).setText(null);
                 }
             });
-            setOnMouseReleased(new EventHandler<MouseEvent>() {
-                @Override public void handle(MouseEvent mouseEvent) {
+            setOnMouseEntered(mouseEvent -> {
+                if (!mouseEvent.isPrimaryButtonDown()) {
                     getScene().setCursor(Cursor.HAND);
-                    //for changing area
-                    area.newPoints(getCenterX(),getCenterY());
-
-                    area.change();
-                    area.calculateArea();
-                    area.calculateLength();
-                    area.calculateAngle();
-
-                    //changing the layout
-                    areaLabel.setText("Area = " + area.getArea());
-                    for(int i=0;i<4;i++)
-                    {
-                        lengthLabels.get(i).setText(area.getLength(i)+"");
-                        lengthLabels.get(i).setLayoutX(area.getLengthx(i));
-                        lengthLabels.get(i).setLayoutY(area.getLengthy(i));
-
-                        angleLabels.get(i).setText(area.getAngle(i)+"");
-                        angleLabels.get(i).setLayoutX(area.getX(i)+2);
-                        angleLabels.get(i).setLayoutY(area.getY(i)+2);
-                    }
-
                 }
             });
-            setOnMouseDragged(new EventHandler<MouseEvent>() {
-                @Override public void handle(MouseEvent mouseEvent) {
-                    double newX = mouseEvent.getX() + dragDelta.x;
-                    if (newX > 0 && newX < getScene().getWidth()) {
-                        setCenterX(newX);
-                    }
-                    double newY = mouseEvent.getY() + dragDelta.y;
-                    if (newY > 0 && newY < getScene().getHeight()) {
-                        setCenterY(newY);
-                    }
-                }
-            });
-            setOnMouseEntered(new EventHandler<MouseEvent>() {
-                @Override public void handle(MouseEvent mouseEvent) {
-                    if (!mouseEvent.isPrimaryButtonDown()) {
-                        getScene().setCursor(Cursor.HAND);
-                    }
-                }
-            });
-            setOnMouseExited(new EventHandler<MouseEvent>() {
-                @Override public void handle(MouseEvent mouseEvent) {
-                    if (!mouseEvent.isPrimaryButtonDown()) {
-                        getScene().setCursor(Cursor.DEFAULT);
-                    }
+            setOnMouseExited(mouseEvent -> {
+                if (!mouseEvent.isPrimaryButtonDown()) {
+                    getScene().setCursor(Cursor.DEFAULT);
                 }
             });
         }
